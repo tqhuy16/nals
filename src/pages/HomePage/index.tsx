@@ -2,7 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useAppDispatch } from '../../store'
 import { fetchBlogsData } from '../../store/blogs/actions'
-import WrapBodyPage from '../../components/wrap-body-page'
+
+import { Avatar, List } from 'antd'
+import type { MenuProps } from 'antd'
+import { Button, Dropdown, Menu, message, Space, Input } from 'antd'
+import { DownOutlined } from '@ant-design/icons'
+const { Search } = Input
 
 interface blogType {
   id: number
@@ -14,62 +19,125 @@ interface blogType {
   comments_count: number
 }
 
-const Index = () => {
-  const pageSize = 10
+const Index: React.FC = () => {
   const dispatch = useAppDispatch()
   const blogsInfo = useSelector((state: any) => state?.blogs)
   const [currentPage, setCurrentPage] = useState<number>(1)
-  useEffect(() => {
-    dispatch(fetchBlogsData())
-  }, [])
+  const [pageSize, setPageSize] = useState<number>(10)
+  const [searchKey, setSearchKey] = useState<string | null>(null)
+  const [sortBy, setSortBy] = useState<string | null>(null)
+  const [sortDerection, setSortDerection] = useState<string | null>(null)
 
-  const handleClickCurrentPage = (pageClicked: number) => {
-    setCurrentPage(pageClicked)
+  const handleSortByClick: MenuProps['onClick'] = (e) => {
+    message.info('Click on menu item.')
+    console.log('click', e)
   }
-  const numberPage = Math.floor(blogsInfo?.totalBlogs / 10) + 1
-  var itemList = new Array(numberPage).fill(0).map((zero, index) => (
-    <li
-      key={index}
-      className={`page-item + ${index + 1 === currentPage ? 'active' : ''}`}
-      style={{ cursor: 'pointer' }}
-      onClick={() => handleClickCurrentPage(index + 1)}
-    >
-      <span className="page-link">{index + 1}</span>
-    </li>
-  ))
+
+  const optionsSortBy = (
+    <Menu
+      onClick={handleSortByClick}
+      items={[
+        {
+          label: 'id',
+          key: '1',
+        },
+        {
+          label: 'title',
+          key: '2',
+        },
+        {
+          label: 'created_at',
+          key: '3',
+        },
+        {
+          label: 'updated_at',
+          key: '4',
+        },
+      ]}
+    />
+  )
+
+  const handleSortDerectionClick: MenuProps['onClick'] = (e) => {
+    message.info('Click on menu item.')
+    console.log('click', e)
+  }
+  const optionsSortDerection = (
+    <Menu
+      onClick={handleSortDerectionClick}
+      items={[
+        {
+          label: 'asc',
+          key: '1',
+        },
+        {
+          label: 'desc',
+          key: '2',
+        },
+      ]}
+    />
+  )
+  const onSearch = (value: string) => {
+    setSearchKey(value)
+  }
+
+  useEffect(() => {
+    dispatch(fetchBlogsData(currentPage, pageSize))
+  }, [currentPage, pageSize])
+
   return (
-    <WrapBodyPage>
-      <ul className="list-unstyled">
-        {blogsInfo?.blogs?.map((blog: blogType) => (
-          <li className="media d-flex my-2" key={blog?.id}>
-            <img
-              src={blog?.image?.url}
-              alt="avatar"
-              style={{ width: '64px', height: '64px', marginRight: '0.75rem' }}
-            />
-            <div className="media-body">
-              <h5 className="mt-0 mb-1">{blog?.title}</h5>
-              {blog?.content}
-            </div>
-          </li>
-        ))}
-      </ul>
-      <nav aria-label="Page navigation example">
-        <ul className="pagination justify-content-center">
-          <li className="page-item">
-            <span className="page-link" aria-label="Previous">
-              <span aria-hidden="true">&laquo;</span>
-            </span>
-          </li>
-          {itemList}
-          <li className="page-item">
-            <span className="page-link" aria-label="Next">
-              <span aria-hidden="true">&raquo;</span>
-            </span>
-          </li>
-        </ul>
-      </nav>
-    </WrapBodyPage>
+    <List
+      header={
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div>
+            <div>search</div>
+            <Space direction="vertical">
+              <Search placeholder="input search text" onSearch={onSearch} style={{ width: '100%' }} />
+            </Space>
+          </div>
+          <div>
+            <div>Sort By</div>
+            <Dropdown overlay={optionsSortBy}>
+              <Button>
+                <Space>
+                  Choose a value
+                  <DownOutlined />
+                </Space>
+              </Button>
+            </Dropdown>
+          </div>
+          <div>
+            <div>Sort Direction</div>
+            <Dropdown overlay={optionsSortDerection}>
+              <Button>
+                <Space>
+                  Choose a value
+                  <DownOutlined />
+                </Space>
+              </Button>
+            </Dropdown>
+          </div>
+        </div>
+      }
+      itemLayout="horizontal"
+      dataSource={blogsInfo?.blogs}
+      pagination={{
+        defaultCurrent: 1,
+        current: currentPage,
+        pageSize,
+        total: blogsInfo?.totalBlogs,
+        showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+        pageSizeOptions: ['10', '20', '50', '100'],
+        onChange: (page, pageSize) => {
+          setPageSize(pageSize)
+          setCurrentPage(page)
+        },
+      }}
+      renderItem={(item: blogType) => (
+        <List.Item>
+          <List.Item.Meta avatar={<Avatar src={item?.image?.url} />} title={item?.title} description={item?.content} />
+        </List.Item>
+      )}
+    />
   )
 }
 

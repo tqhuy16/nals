@@ -1,11 +1,28 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import HomePage from './pages/HomePage'
 import Detail from './pages/Detail'
+import 'antd/dist/antd.css'
+import WrapPage from './components/wrap-page'
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="detail" element={<Detail />} />
+      <Route
+        path="/"
+        element={
+          <WrapPage>
+            <HomePage />
+          </WrapPage>
+        }
+      />
+      <Route
+        path="detail"
+        element={
+          <WrapPage>
+            <Detail />
+          </WrapPage>
+        }
+      />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
 }
