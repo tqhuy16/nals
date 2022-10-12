@@ -1,143 +1,160 @@
 import React, { useEffect, useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 import { useAppDispatch } from '../../store'
 import { fetchBlogsData } from '../../store/blogs/actions'
-
-import { Avatar, List } from 'antd'
-import type { MenuProps } from 'antd'
-import { Button, Dropdown, Menu, message, Space, Input } from 'antd'
-import { DownOutlined } from '@ant-design/icons'
-const { Search } = Input
-
-interface blogType {
-  id: number
-  title: string
-  content: string
-  image: { url: string }
-  created_at: string
-  updated_at: string
-  comments_count: number
-}
+import EditBlog from '../Blogs/edit-blog'
+import { blogType } from '../../type/blogs-type'
+import { Button, Select, Input, Avatar, List } from 'antd'
+const { Option } = Select
 
 const Index: React.FC = () => {
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
   const blogsInfo = useSelector((state: any) => state?.blogs)
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
-  const [searchKey, setSearchKey] = useState<string | null>(null)
-  const [sortBy, setSortBy] = useState<string | null>(null)
-  const [sortDerection, setSortDerection] = useState<string | null>(null)
+  const [searchKey, setSearchKey] = useState<string>('')
+  const [sortBy, setSortBy] = useState<string>('created_at')
+  const [sortDerection, setSortDerection] = useState<string>('desc')
+  const [isEditBlog, setIsEditBlog] = useState<boolean>(false)
+  const [inforBlogEdit, setInforBlogEdit] = useState({})
 
-  const handleSortByClick: MenuProps['onClick'] = (e) => {
-    message.info('Click on menu item.')
-    console.log('click', e)
+  const optionsSortDirection = [
+    { label: 'ASC', value: 'asc' },
+    { label: 'DESC', value: 'desc' },
+  ]
+
+  const optionsSortBy = [
+    { label: 'Id', value: 'id' },
+    { label: 'Title', value: 'title' },
+    { label: 'Content', value: 'content' },
+    { label: 'Create At', value: 'created_at' },
+    { label: 'Updated At', value: 'updated_at' },
+  ]
+  const handleSearchKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchKey(e.target.value)
   }
 
-  const optionsSortBy = (
-    <Menu
-      onClick={handleSortByClick}
-      items={[
-        {
-          label: 'id',
-          key: '1',
-        },
-        {
-          label: 'title',
-          key: '2',
-        },
-        {
-          label: 'created_at',
-          key: '3',
-        },
-        {
-          label: 'updated_at',
-          key: '4',
-        },
-      ]}
-    />
-  )
-
-  const handleSortDerectionClick: MenuProps['onClick'] = (e) => {
-    message.info('Click on menu item.')
-    console.log('click', e)
+  const handleCreateNewBlog = () => {
+    navigate('/blog/create')
   }
-  const optionsSortDerection = (
-    <Menu
-      onClick={handleSortDerectionClick}
-      items={[
-        {
-          label: 'asc',
-          key: '1',
-        },
-        {
-          label: 'desc',
-          key: '2',
-        },
-      ]}
-    />
-  )
-  const onSearch = (value: string) => {
-    setSearchKey(value)
+
+  const handleEditBlog = (item: object) => {
+    setIsEditBlog(true)
+    setInforBlogEdit({ ...item })
+  }
+
+  const handleChangeSortDirection = (value: string) => {
+    setSortDerection(value)
+  }
+
+  const handleChangeSortBy = (value: string) => {
+    setSortBy(value)
+  }
+
+  const onSearchBlog = () => {
+    dispatch(fetchBlogsData(currentPage, pageSize, searchKey, sortBy, sortDerection))
   }
 
   useEffect(() => {
     dispatch(fetchBlogsData(currentPage, pageSize))
-  }, [currentPage, pageSize])
+  }, [currentPage, pageSize, isEditBlog])
 
   return (
-    <List
-      header={
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <div>
-            <div>search</div>
-            <Space direction="vertical">
-              <Search placeholder="input search text" onSearch={onSearch} style={{ width: '100%' }} />
-            </Space>
-          </div>
-          <div>
-            <div>Sort By</div>
-            <Dropdown overlay={optionsSortBy}>
-              <Button>
-                <Space>
-                  Choose a value
-                  <DownOutlined />
-                </Space>
+    <>
+      <List
+        header={
+          <div
+            style={{
+              flexDirection: 'column',
+              display: 'flex',
+            }}
+          >
+            <div>
+              <Button
+                type="primary"
+                style={{
+                  float: 'right',
+                  marginBottom: '10px',
+                }}
+                onClick={handleCreateNewBlog}
+              >
+                New Blog
               </Button>
-            </Dropdown>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'end',
+              }}
+            >
+              <div>
+                <div>search</div>
+                <Input placeholder="Search Key" value={searchKey} onChange={handleSearchKeyChange} />
+              </div>
+              <div>
+                <div>Sort By</div>
+                <Select defaultValue={sortBy} onChange={handleChangeSortBy}>
+                  {optionsSortBy.map((op) => (
+                    <Option value={op.value}>{op.label}</Option>
+                  ))}
+                </Select>
+              </div>
+              <div>
+                <div>Sort Direction</div>
+                <Select defaultValue={sortDerection} onChange={handleChangeSortDirection}>
+                  {optionsSortDirection.map((op) => (
+                    <Option value={op.value}>{op.label}</Option>
+                  ))}
+                </Select>
+              </div>
+              <div>
+                <Button type="primary" onClick={onSearchBlog}>
+                  Search
+                </Button>
+              </div>
+            </div>
           </div>
-          <div>
-            <div>Sort Direction</div>
-            <Dropdown overlay={optionsSortDerection}>
-              <Button>
-                <Space>
-                  Choose a value
-                  <DownOutlined />
-                </Space>
-              </Button>
-            </Dropdown>
-          </div>
-        </div>
-      }
-      itemLayout="horizontal"
-      dataSource={blogsInfo?.blogs}
-      pagination={{
-        defaultCurrent: 1,
-        current: currentPage,
-        pageSize,
-        total: blogsInfo?.totalBlogs,
-        showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
-        pageSizeOptions: ['10', '20', '50', '100'],
-        onChange: (page, pageSize) => {
-          setPageSize(pageSize)
-          setCurrentPage(page)
-        },
-      }}
-      renderItem={(item: blogType) => (
-        <List.Item>
-          <List.Item.Meta avatar={<Avatar src={item?.image?.url} />} title={item?.title} description={item?.content} />
-        </List.Item>
+        }
+        itemLayout="horizontal"
+        dataSource={blogsInfo?.blogs}
+        pagination={{
+          defaultCurrent: 1,
+          current: currentPage,
+          pageSize,
+          total: blogsInfo?.totalBlogs,
+          showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+          pageSizeOptions: ['10', '20', '50', '100'],
+          onChange: (page, pageSize) => {
+            setPageSize(pageSize)
+            setCurrentPage(page)
+          },
+        }}
+        renderItem={(item: blogType) => (
+          <List.Item>
+            <List.Item.Meta
+              avatar={<Avatar src={item?.image?.url} />}
+              title={item?.title}
+              description={item?.content}
+            />
+            <span
+              style={{ cursor: 'pointer', color: '#1890ff', marginRight: '8px' }}
+              onClick={() => handleEditBlog(item)}
+            >
+              Edit
+            </span>
+            <span style={{ cursor: 'pointer', color: 'red' }} onClick={() => handleEditBlog(item)}>
+              Delete
+            </span>
+          </List.Item>
+        )}
+      />
+      {isEditBlog && (
+        <EditBlog inforBlogEdit={inforBlogEdit} isEditBlog={isEditBlog} setIsEditBlog={setIsEditBlog} />
       )}
-    />
+    </>
   )
 }
 

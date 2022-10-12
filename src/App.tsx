@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import HomePage from './pages/HomePage'
 import Detail from './pages/Detail'
+import CreateBog from './pages/Blogs/create-blog'
 import 'antd/dist/antd.css'
 import WrapPage from './components/wrap-page'
 function App() {
@@ -11,6 +12,14 @@ function App() {
         element={
           <WrapPage>
             <HomePage />
+          </WrapPage>
+        }
+      />
+      <Route
+        path="/blog/create"
+        element={
+          <WrapPage>
+            <CreateBog />
           </WrapPage>
         }
       />
