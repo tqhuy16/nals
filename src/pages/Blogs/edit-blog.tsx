@@ -2,7 +2,6 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { UploadOutlined } from '@ant-design/icons'
 import { Modal, Input, Form, Button, Upload } from 'antd'
 import type { UploadProps } from 'antd'
-// import { blogType } from '../../type/blogs-type'
 import type { UploadFile } from 'antd/es/upload/interface'
 import { updateBlog } from '../../store/blogs/actions'
 import { useAppDispatch } from '../../store'
@@ -77,14 +76,7 @@ const EditBlog = (props: {
           >
             <Input placeholder="Enter entry content" />
           </Form.Item>
-          <Upload
-            {...propsImage}
-            //   action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-            // name="image"
-            listType="picture"
-            maxCount={1}
-            defaultFileList={[...fileList]}
-          >
+          <Upload {...propsImage} listType="picture" maxCount={1} defaultFileList={[...fileList]}>
             <Button icon={<UploadOutlined />}>Upload (Max: 1)</Button>
           </Upload>
           <Form.Item style={{ marginTop: '24px' }}>
