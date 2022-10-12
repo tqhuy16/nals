@@ -30,7 +30,7 @@ const CreateBlog: React.FC = () => {
   }
   const handleSubmit = (values: any) => {
     try {
-      dispatch(createBlog(values.title, values.content))
+      dispatch(createBlog(values.title, values.content, fileList))
       navigate('/')
     } catch (error) {
       console.log('error', error)

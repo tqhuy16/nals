@@ -15,8 +15,9 @@ const blogsSlice = createSlice({
       const elementUpdated = actions?.payload?.items
       state.blogs.map((bl: blogType) => (bl?.id !== elementUpdated.id ? bl : elementUpdated))
     },
-    cretateBlog(state, actions) {
-      console.log('actions', actions)
+    deleteBlog(state, actions) {
+      const idElementDeleted = actions?.payload?.idDelete
+      state.blogs = state.blogs.filter((bl: blogType) => bl?.id !== idElementDeleted)
     },
   },
 })

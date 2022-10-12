@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { useAppDispatch } from '../../store'
-import { fetchBlogsData } from '../../store/blogs/actions'
+import { fetchBlogsData, deleteBlogById } from '../../store/blogs/actions'
 import EditBlog from '../Blogs/edit-blog'
 import { blogType } from '../../type/blogs-type'
-import { Button, Select, Input, Avatar, List } from 'antd'
+import { Button, Select, Input, Avatar, List, Modal } from 'antd'
+import { ExclamationCircleOutlined } from '@ant-design/icons'
+const { confirm } = Modal
 const { Option } = Select
 
 const Index: React.FC = () => {
@@ -40,7 +42,7 @@ const Index: React.FC = () => {
     navigate('/blog/create')
   }
 
-  const handleEditBlog = (item: object) => {
+  const handleEditBlog = (item: blogType) => {
     setIsEditBlog(true)
     setInforBlogEdit({ ...item })
   }
@@ -55,6 +57,20 @@ const Index: React.FC = () => {
 
   const onSearchBlog = () => {
     dispatch(fetchBlogsData(currentPage, pageSize, searchKey, sortBy, sortDerection))
+  }
+
+  const showDeleteConfirm = (item: blogType) => {
+    confirm({
+      title: 'Are you sure delete this blog?',
+      icon: <ExclamationCircleOutlined />,
+      content: `${item?.title}`,
+      okText: 'Yes',
+      okType: 'danger',
+      cancelText: 'No',
+      onOk() {
+        dispatch(deleteBlogById(item?.id))
+      },
+    })
   }
 
   useEffect(() => {
@@ -97,16 +113,20 @@ const Index: React.FC = () => {
               <div>
                 <div>Sort By</div>
                 <Select defaultValue={sortBy} onChange={handleChangeSortBy}>
-                  {optionsSortBy.map((op) => (
-                    <Option value={op.value}>{op.label}</Option>
+                  {optionsSortBy.map((op, idx) => (
+                    <Option key={idx} value={op.value}>
+                      {op.label}
+                    </Option>
                   ))}
                 </Select>
               </div>
               <div>
                 <div>Sort Direction</div>
                 <Select defaultValue={sortDerection} onChange={handleChangeSortDirection}>
-                  {optionsSortDirection.map((op) => (
-                    <Option value={op.value}>{op.label}</Option>
+                  {optionsSortDirection.map((op, idx) => (
+                    <Option key={idx} value={op.value}>
+                      {op.label}
+                    </Option>
                   ))}
                 </Select>
               </div>
@@ -145,7 +165,7 @@ const Index: React.FC = () => {
             >
               Edit
             </span>
-            <span style={{ cursor: 'pointer', color: 'red' }} onClick={() => handleEditBlog(item)}>
+            <span style={{ cursor: 'pointer', color: 'red' }} onClick={() => showDeleteConfirm(item)}>
               Delete
             </span>
           </List.Item>

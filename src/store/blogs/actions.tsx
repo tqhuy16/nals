@@ -43,7 +43,6 @@ export const updateBlog = (id: number, title: string, content: string) => {
     }
     try {
       const dataUpdate = await update()
-      // console.log('blogsData', dataUpdate)
       dispatch(
         blogsActions.editBlog({
           items: dataUpdate?.data,
@@ -55,16 +54,36 @@ export const updateBlog = (id: number, title: string, content: string) => {
   }
 }
 
-export const createBlog = (title: string, content: string) => {
-  return async (dispatch: any) => {
+export const createBlog = (title: string, content: string, fileList: any) => {
+  console.log(fileList)
+  return async () => {
     const create = async () => {
       const respone = await axios.post(`https://api-placeholder.herokuapp.com/api/v2/blogs/`, {
-        blog: { title, content },
+        blog: { title, content, image: fileList },
       })
       return respone?.data
     }
     try {
       await create()
+    } catch (err) {
+      console.log(err)
+    }
+  }
+}
+
+export const deleteBlogById = (id: number) => {
+  return async (dispatch: any) => {
+    const deleteBlog = async () => {
+      const respone = await axios.delete(`https://api-placeholder.herokuapp.com/api/v2/blogs/${id}`)
+      return respone?.data
+    }
+    try {
+      await deleteBlog()
+      dispatch(
+        blogsActions.deleteBlog({
+          idDelete: id,
+        }),
+      )
     } catch (err) {
       console.log(err)
     }
