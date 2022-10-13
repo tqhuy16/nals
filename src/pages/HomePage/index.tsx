@@ -19,7 +19,7 @@ const Index: React.FC = () => {
   const [pageSize, setPageSize] = useState<number>(10)
   const [searchKey, setSearchKey] = useState<string>('')
   const [sortBy, setSortBy] = useState<string>('created_at')
-  const [sortDerection, setSortDerection] = useState<string>('desc')
+  const [sortDirection, setSortDirection] = useState<string>('desc')
   const [isEditBlog, setIsEditBlog] = useState<boolean>(false)
   const [inforBlogEdit, setInforBlogEdit] = useState({})
   const [isLoading, setIsLoading] = useState<boolean>(true)
@@ -50,7 +50,7 @@ const Index: React.FC = () => {
   }
 
   const handleChangeSortDirection = (value: string) => {
-    setSortDerection(value)
+    setSortDirection(value)
   }
 
   const handleChangeSortBy = (value: string) => {
@@ -58,7 +58,7 @@ const Index: React.FC = () => {
   }
 
   const onSearchBlog = () => {
-    dispatch(fetchBlogsData(currentPage, pageSize, searchKey, sortBy, sortDerection))
+    dispatch(fetchBlogsData(currentPage, pageSize, searchKey, sortBy, sortDirection))
   }
 
   const showDeleteConfirm = (item: blogType) => {
@@ -82,7 +82,7 @@ const Index: React.FC = () => {
   useEffect(() => {
     try {
       setIsLoading(true)
-      dispatch(fetchBlogsData(currentPage, pageSize))
+      dispatch(fetchBlogsData(currentPage, pageSize, searchKey, sortBy))
     } catch (error) {
       console.log(error)
     } finally {
@@ -139,7 +139,7 @@ const Index: React.FC = () => {
                   </div>
                   <div>
                     <div>Sort Direction</div>
-                    <Select defaultValue={sortDerection} onChange={handleChangeSortDirection}>
+                    <Select defaultValue={sortDirection} onChange={handleChangeSortDirection}>
                       {optionsSortDirection.map((op, idx) => (
                         <Option key={idx} value={op.value}>
                           {op.label}

@@ -18,5 +18,5 @@ install surge global
 
 ### npm run deploy
 
-This script run surge deploy command
+This script run surge deploy command.\
 All step script into deploy-surge.sh
