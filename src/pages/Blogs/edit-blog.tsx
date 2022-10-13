@@ -11,7 +11,6 @@ const EditBlog = (props: {
   setIsEditBlog: Dispatch<SetStateAction<boolean>>
   inforBlogEdit: any
 }) => {
-  console.log('inforBlogEdit', props.inforBlogEdit)
   const dispatch = useAppDispatch()
   const [fileList, setFileList] = useState<UploadFile[]>([])
 

@@ -27,7 +27,6 @@ const blogsSlice = createSlice({
       state.blogs = state.blogs.filter((bl: blogType) => bl?.id !== idElementDeleted)
     },
     createBlog(state, actions) {
-      console.log('actions', actions)
       const elementCreated = actions?.payload?.item
       state.blogs.unshift(elementCreated)
     },

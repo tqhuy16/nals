@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { blogsActions } from './slices'
+import { domain } from '../../constant'
 export const fetchBlogsData = (
   page: number = 1,
   offset: number = 20,
@@ -10,9 +11,9 @@ export const fetchBlogsData = (
   return async (dispatch: any) => {
     let urlGetBlogs = ''
     if (searchKey === '') {
-      urlGetBlogs = `https://api-placeholder.herokuapp.com/api/v2/blogs?page=${page}&offset=${offset}&sort_by=${sortBy}&sort_direction=${sortDerection}`
+      urlGetBlogs = `${domain}?page=${page}&offset=${offset}&sort_by=${sortBy}&sort_direction=${sortDerection}`
     } else {
-      urlGetBlogs = `https://api-placeholder.herokuapp.com/api/v2/blogs?page=${page}&offset=${offset}&search=${searchKey}&sort_by=${sortBy}&sort_direction=${sortDerection}`
+      urlGetBlogs = `${domain}?page=${page}&offset=${offset}&search=${searchKey}&sort_by=${sortBy}&sort_direction=${sortDerection}`
     }
     const fetchData = async () => {
       const respone = await axios.get(urlGetBlogs)
@@ -68,7 +69,7 @@ export const createBlog = (title: string, content: string, fileList: any) => {
   return async (dispatch: any) => {
     const create = async () => {
       const respone = await axios.post(
-        `https://api-placeholder.herokuapp.com/api/v2/blogs/`,
+        `${domain}`,
         {
           blog: { title, content, image: fileList[0] },
         },
@@ -98,7 +99,7 @@ export const createBlog = (title: string, content: string, fileList: any) => {
 export const deleteBlogById = (id: number) => {
   return async (dispatch: any) => {
     const deleteBlog = async () => {
-      const respone = await axios.delete(`https://api-placeholder.herokuapp.com/api/v2/blogs/${id}`)
+      const respone = await axios.delete(`${domain}/${id}`)
       return respone?.data
     }
     try {

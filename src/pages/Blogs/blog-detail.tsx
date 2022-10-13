@@ -6,16 +6,25 @@ import Title from 'antd/lib/typography/Title'
 import moment from 'moment'
 
 import { blogType } from '../../type/blogs-type'
+import SkeletonPage from '../../components/skeleton'
+import { domain } from '../../constant'
 
 const BlogDetail = () => {
   const params = useParams()
   const [blogInfo, setBlogInfo] = useState<blogType>()
+  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   useEffect(() => {
     const blogDetail = async () => {
-      const dataBlogDeail = await axios.get(`https://api-placeholder.herokuapp.com/api/v2/blogs/${params.id}`)
-      console.log('dataBlogDeail', dataBlogDeail?.data?.data)
-      setBlogInfo(dataBlogDeail?.data?.data)
+      try {
+        const dataBlogDeail = await axios.get(`${domain}/${params.id}`)
+        setBlogInfo(dataBlogDeail?.data?.data)
+        setIsLoading(false)
+      } catch (error) {
+        console.log(error)
+      } finally {
+        setIsLoading(false)
+      }
     }
     blogDetail()
   }, [])
@@ -24,18 +33,24 @@ const BlogDetail = () => {
 
   return (
     <>
-      <Title style={{ textAlign: 'center' }}>Detail Blog</Title>
-      <Comment
-        actions={actions}
-        author={<div style={{ fontWeight: 'bold', color: 'black' }}>{blogInfo?.title}</div>}
-        avatar={<Avatar src={blogInfo?.image?.url} alt="Han Solo" />}
-        content={blogInfo?.content}
-        datetime={
-          <Tooltip title={moment(blogInfo?.created_at).format('DD/MM/YYYY')}>
-            <span> - {moment(blogInfo?.created_at).fromNow()}</span>
-          </Tooltip>
-        }
-      />
+      {isLoading ? (
+        <SkeletonPage />
+      ) : (
+        <>
+          <Title style={{ textAlign: 'center' }}>Detail Blog</Title>
+          <Comment
+            actions={actions}
+            author={<div style={{ fontWeight: 'bold', color: 'black' }}>{blogInfo?.title}</div>}
+            avatar={<Avatar src={blogInfo?.image?.url} alt="Han Solo" />}
+            content={blogInfo?.content}
+            datetime={
+              <Tooltip title={moment(blogInfo?.created_at).format('DD/MM/YYYY')}>
+                <span> - {moment(blogInfo?.created_at).fromNow()}</span>
+              </Tooltip>
+            }
+          />
+        </>
+      )}
     </>
   )
 }
