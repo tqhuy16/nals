@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Breadcrumb, Layout, Menu } from 'antd'
+import { Layout, Menu } from 'antd'
 import './index.css'
 const { Header, Content, Footer } = Layout
 
@@ -15,14 +15,11 @@ const WrapPage = (props: {
     | null
     | undefined
 }) => {
-  const listMenu = [
-    { label: 'Home', url: '/' },
-    { label: 'Detail', url: '/detail' },
-  ]
+  const listMenu = [{ label: 'Home', url: '/' }]
   return (
     <Layout className="layout">
       <Header>
-        <Menu theme="dark" mode="horizontal">
+        <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['1']}>
           {listMenu.map((el, idx) => (
             <Menu.Item key={idx + 1}>
               <span>{el.label}</span>

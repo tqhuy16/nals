@@ -28,9 +28,10 @@ const CreateBlog: React.FC = () => {
     },
     fileList,
   }
-  const handleSubmit = (values: any) => {
+
+  const handleSubmit = async (values: any) => {
     try {
-      dispatch(createBlog(values.title, values.content, fileList))
+      await dispatch(createBlog(values.title, values.content, fileList))
       navigate('/')
     } catch (error) {
       console.log('error', error)

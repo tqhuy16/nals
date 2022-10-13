@@ -33,12 +33,22 @@ export const fetchBlogsData = (
   }
 }
 
-export const updateBlog = (id: number, title: string, content: string) => {
+export const updateBlog = (id: number, title: string, content: string, fileList: any) => {
   return async (dispatch: any) => {
     const update = async () => {
-      const respone = await axios.put(`https://api-placeholder.herokuapp.com/api/v2/blogs/${id}`, {
-        blog: { title, content },
-      })
+      const respone = await axios.put(
+        `https://api-placeholder.herokuapp.com/api/v2/blogs/${id}`,
+        {
+          blog: { title, content, image: fileList[0] },
+        },
+        {
+          headers: {
+            accept: 'application/json',
+            'Accept-Language': 'en-US,en;q=0.8',
+            'Content-Type': `multipart/form-data`,
+          },
+        },
+      )
       return respone?.data
     }
     try {
@@ -55,16 +65,30 @@ export const updateBlog = (id: number, title: string, content: string) => {
 }
 
 export const createBlog = (title: string, content: string, fileList: any) => {
-  console.log(fileList)
-  return async () => {
+  return async (dispatch: any) => {
     const create = async () => {
-      const respone = await axios.post(`https://api-placeholder.herokuapp.com/api/v2/blogs/`, {
-        blog: { title, content, image: fileList },
-      })
+      const respone = await axios.post(
+        `https://api-placeholder.herokuapp.com/api/v2/blogs/`,
+        {
+          blog: { title, content, image: fileList[0] },
+        },
+        {
+          headers: {
+            accept: 'application/json',
+            'Accept-Language': 'en-US,en;q=0.8',
+            'Content-Type': `multipart/form-data`,
+          },
+        },
+      )
       return respone?.data
     }
     try {
-      await create()
+      const response = await create()
+      dispatch(
+        blogsActions.createBlog({
+          item: response?.data,
+        }),
+      )
     } catch (err) {
       console.log(err)
     }

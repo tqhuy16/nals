@@ -73,9 +73,13 @@ const Index: React.FC = () => {
     })
   }
 
+  const handleRedirectDetailBlog = (id: number) => {
+    navigate(`/blog/detail/${id}`)
+  }
+
   useEffect(() => {
     dispatch(fetchBlogsData(currentPage, pageSize))
-  }, [currentPage, pageSize, isEditBlog])
+  }, [currentPage, pageSize, dispatch])
 
   return (
     <>
@@ -155,7 +159,13 @@ const Index: React.FC = () => {
         renderItem={(item: blogType) => (
           <List.Item>
             <List.Item.Meta
-              avatar={<Avatar src={item?.image?.url} />}
+              avatar={
+                <Avatar
+                  src={item?.image?.url}
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => handleRedirectDetailBlog(item?.id)}
+                />
+              }
               title={item?.title}
               description={item?.content}
             />

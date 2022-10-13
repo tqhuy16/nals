@@ -1,11 +1,18 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { blogType } from '../../type/blogs-type'
+export interface TypeState {
+  blogs: blogType[]
+  totalBlogs: number
+}
+
+const initialState: TypeState = {
+  blogs: [],
+  totalBlogs: 0,
+}
+
 const blogsSlice = createSlice({
   name: 'blogsList',
-  initialState: {
-    blogs: [],
-    totalBlogs: 0,
-  },
+  initialState,
   reducers: {
     fetchBlogsData(state, actions) {
       state.blogs = actions?.payload?.items
@@ -13,11 +20,16 @@ const blogsSlice = createSlice({
     },
     editBlog(state, actions) {
       const elementUpdated = actions?.payload?.items
-      state.blogs.map((bl: blogType) => (bl?.id !== elementUpdated.id ? bl : elementUpdated))
+      state.blogs = state.blogs.map((bl: blogType) => (bl?.id !== elementUpdated.id ? bl : elementUpdated))
     },
     deleteBlog(state, actions) {
       const idElementDeleted = actions?.payload?.idDelete
       state.blogs = state.blogs.filter((bl: blogType) => bl?.id !== idElementDeleted)
+    },
+    createBlog(state, actions) {
+      console.log('actions', actions)
+      const elementCreated = actions?.payload?.item
+      state.blogs.unshift(elementCreated)
     },
   },
 })

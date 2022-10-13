@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import HomePage from './pages/HomePage'
-import Detail from './pages/Detail'
 import CreateBog from './pages/Blogs/create-blog'
+import BlogDetail from './pages/Blogs/blog-detail'
 import 'antd/dist/antd.css'
 import WrapPage from './components/wrap-page'
 function App() {
@@ -24,10 +24,10 @@ function App() {
         }
       />
       <Route
-        path="detail"
+        path="/blog/detail/:id"
         element={
           <WrapPage>
-            <Detail />
+            <BlogDetail />
           </WrapPage>
         }
       />

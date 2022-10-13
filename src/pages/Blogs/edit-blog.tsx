@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import React, { Dispatch, SetStateAction, useState } from 'react'
 import { UploadOutlined } from '@ant-design/icons'
 import { Modal, Input, Form, Button, Upload } from 'antd'
 import type { UploadProps } from 'antd'
@@ -11,21 +11,9 @@ const EditBlog = (props: {
   setIsEditBlog: Dispatch<SetStateAction<boolean>>
   inforBlogEdit: any
 }) => {
-  // console.log('inforBlogEdit', props.inforBlogEdit)
+  console.log('inforBlogEdit', props.inforBlogEdit)
   const dispatch = useAppDispatch()
   const [fileList, setFileList] = useState<UploadFile[]>([])
-  //   const fileList: UploadFile[] = [
-  //     {
-  //       uid: Math.random().toString(),
-  //       status: 'done',
-  //       name:
-  //         props?.inforBlogEdit?.image?.url.split('/').pop() === 'default.png'
-  //           ? 'no image'
-  //           : props?.inforBlogEdit?.image?.url.split('/').pop(),
-  //       url: props?.inforBlogEdit?.image?.url,
-  //       thumbUrl: props?.inforBlogEdit?.image?.url,
-  //     },
-  //   ]
 
   const propsImage: UploadProps = {
     onRemove: (file) => {
@@ -42,8 +30,8 @@ const EditBlog = (props: {
     fileList,
   }
 
-  const handleSubmit = (values: any) => {
-    dispatch(updateBlog(props.inforBlogEdit.id, values.title, values.content))
+  const handleSubmit = async (values: any) => {
+    await dispatch(updateBlog(props.inforBlogEdit.id, values.title, values.content, fileList))
     props.setIsEditBlog(false)
   }
 
